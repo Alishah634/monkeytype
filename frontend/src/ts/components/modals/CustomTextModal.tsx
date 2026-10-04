@@ -206,6 +206,13 @@ export function CustomTextModal(): JSXElement {
     );
   };
 
+  const applyConvertIndentation = () => {
+    form.setFieldValue(
+      "text",
+      Strings.convertIndentationToTabs(form.getFieldValue("text")),
+    );
+  };
+
   const applyReplaceNewlines = (mode: "space" | "periodSpace") => {
     let text = form.getFieldValue("text");
     if (mode === "periodSpace") {
@@ -679,6 +686,19 @@ export function CustomTextModal(): JSXElement {
                 text="apply"
                 class="w-full"
                 onClick={applyReplaceControlChars}
+              />
+            </SettingsGroup>
+
+            <SettingsGroup
+              title="Convert indentation to tabs"
+              icon="fa-indent"
+              sub="Keeps the indentation of pasted code by turning leading spaces into tabs, which you type with the tab key."
+            >
+              <Button
+                variant="button"
+                text="apply"
+                class="w-full"
+                onClick={applyConvertIndentation}
               />
             </SettingsGroup>
 

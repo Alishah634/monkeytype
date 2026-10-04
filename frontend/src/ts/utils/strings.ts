@@ -228,6 +228,43 @@ export function replaceControlCharacters(textToClear: string): string {
 }
 
 /**
+ * Converts leading space indentation to tabs, so pasted code keeps its
+ * structure (custom text collapses spaces, but keeps tabs).
+ * Indentation shared by every line is removed first, then the smallest
+ * remaining indent is used as the width of one tab.
+ * @param text the text to convert
+ * @returns the text with leading spaces replaced by tabs
+ */
+export function convertIndentationToTabs(text: string): string {
+  const lines = text
+    .split(/\r\n|\r|\n/)
+    .map((line) => (line.trim() === "" ? "" : line));
+
+  const indents = lines
+    .filter((line) => line !== "")
+    .map((line) => /^ */.exec(line)?.[0].length ?? 0);
+
+  if (indents.length === 0) return text;
+
+  const commonIndent = Math.min(...indents);
+  const nestedIndents = indents
+    .map((indent) => indent - commonIndent)
+    .filter((indent) => indent > 0);
+  const tabWidth = nestedIndents.length > 0 ? Math.min(...nestedIndents) : 1;
+
+  return lines
+    .map((line) => {
+      if (line === "") return line;
+      const indent = (/^ */.exec(line)?.[0].length ?? 0) - commonIndent;
+      return (
+        "\t".repeat(Math.floor(indent / tabWidth)) +
+        line.slice(indent + commonIndent)
+      );
+    })
+    .join("\n");
+}
+
+/**
  * Detect if a word contains RTL (Right-to-Left) characters.
  * This is for test scenarios where individual words may have different directions.
  * Uses a simple regex pattern that covers all common RTL scripts.

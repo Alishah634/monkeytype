@@ -217,6 +217,35 @@ describe("string utils", () => {
     );
   });
 
+  describe("convertIndentationToTabs", () => {
+    it.each([
+      ["no indentation", "a\nb", "a\nb"],
+      ["4 space indent", "def f():\n    return 1", "def f():\n\treturn 1"],
+      [
+        "2 space indent",
+        "a {\n  b {\n    c\n  }\n}",
+        "a {\n\tb {\n\t\tc\n\t}\n}",
+      ],
+      [
+        "removes indentation shared by all lines",
+        "    if a:\n        b",
+        "if a:\n\tb",
+      ],
+      [
+        "drops leftover alignment spaces",
+        "f(a,\n      b)\n    c",
+        "f(a,\n\tb)\n\tc",
+      ],
+      ["keeps existing tabs", "a\n\tb", "a\n\tb"],
+      ["empties whitespace only lines", "a\n   \n    b", "a\n\n\tb"],
+      ["normalizes line endings", "a\r\n  b", "a\n\tb"],
+      ["keeps spaces inside lines", "  a + b", "a + b"],
+      ["empty text", "", ""],
+    ])("%s", (_desc, input, expected) => {
+      expect(Strings.convertIndentationToTabs(input)).toBe(expected);
+    });
+  });
+
   describe("hasRTLCharacters", () => {
     it.each([
       // LTR characters should return false
