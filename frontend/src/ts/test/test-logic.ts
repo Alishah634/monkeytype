@@ -96,6 +96,8 @@ import * as TestInitFailed from "../elements/test-init-failed";
 import { canQuickRestart } from "../utils/quick-restart";
 import { animate } from "animejs";
 import { setInputElementValue } from "../input/input-element";
+import { setVimMode } from "../input/state";
+import * as Caret from "./caret";
 import { debounce } from "throttle-debounce";
 import { qs } from "../utils/dom";
 import { setAccountButtonSpinner } from "../states/header";
@@ -303,6 +305,8 @@ export async function restart(options = {} as RestartOptions): Promise<void> {
   clearQuoteStats();
   CompositionState.setComposing(false);
   CompositionState.setData("");
+  setVimMode("insert");
+  Caret.updateStyle();
   Strings.clearWordDirectionCache();
   testReinitCount = 0;
   failReason = "";

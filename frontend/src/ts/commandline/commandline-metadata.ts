@@ -361,6 +361,11 @@ export const commandlineConfigMetadata: CommandlineConfigMetadataObject = {
       options: "fromSchema",
     },
   },
+  vimMode: {
+    subgroup: {
+      options: "fromSchema",
+    },
+  },
   //sound
   soundVolume: {
     subgroup: {

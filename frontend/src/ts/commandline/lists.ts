@@ -121,6 +121,7 @@ export const commands: CommandsSubgroup = {
       "lazyMode",
       "layout",
       "codeUnindentOnBackspace",
+      "vimMode",
     ),
 
     //sound

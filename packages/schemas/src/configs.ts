@@ -446,6 +446,7 @@ export const ConfigSchema = z
     lazyMode: z.boolean(),
     layout: LayoutSchema,
     codeUnindentOnBackspace: z.boolean(),
+    vimMode: z.boolean(),
 
     // sound
     soundVolume: SoundVolumeSchema,

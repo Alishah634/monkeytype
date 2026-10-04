@@ -22,6 +22,7 @@ import { __nonReactive, setBailedOut, wordsHaveTab } from "../../states/test";
 import { getCustomTextIndicator } from "../../states/core";
 import { logTestEvent } from "../../test/events/data";
 import { getTestEventCode } from "../../test/events/helpers";
+import { handleVimKeydown } from "./vim";
 
 export async function handleTab(e: KeyboardEvent, now: number): Promise<void> {
   if (wordsHaveTab() && !e.shiftKey) {
@@ -129,6 +130,12 @@ export async function onKeydown(event: KeyboardEvent): Promise<void> {
     alt: event.altKey ? true : undefined,
     meta: event.metaKey ? true : undefined,
   });
+
+  if (handleVimKeydown(event, now)) {
+    event.preventDefault();
+    event.stopPropagation();
+    return;
+  }
 
   // allow arrows in arrows funbox
   const arrowsActive = Config.funbox.includes("arrows");

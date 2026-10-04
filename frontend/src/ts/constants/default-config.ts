@@ -22,6 +22,7 @@ const obj: Config = {
   showKeyTips: true,
   smoothCaret: "medium",
   codeUnindentOnBackspace: false,
+  vimMode: false,
   quickRestart: "off",
   punctuation: false,
   numbers: false,

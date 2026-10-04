@@ -110,6 +110,7 @@ export function SettingsPage(): JSXElement {
             <SearchableAutoSetting key="lazyMode" />
             <Layout />
             <SearchableAutoSetting key="codeUnindentOnBackspace" />
+            <SearchableAutoSetting key="vimMode" />
           </Section>
           <Section title="sound">
             <SoundVolume />

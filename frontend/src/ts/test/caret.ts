@@ -9,6 +9,7 @@ import { configEvent } from "../events/config";
 import { Caret } from "../elements/caret";
 import * as CompositionState from "../legacy-states/composition";
 import { qsr } from "../utils/dom";
+import { getVimMode } from "../input/state";
 
 export function stopAnimation(): void {
   caret.stopBlinking();
@@ -34,10 +35,19 @@ export function resetPosition(): void {
   });
 }
 
+function isVimNormalMode(): boolean {
+  return Config.vimMode && getVimMode() === "normal";
+}
+
 export function updatePosition(noAnim = false): void {
+  let letterIndex =
+    getCurrentInput().length + CompositionState.getData().length;
+  // in vim normal mode the caret sits on the last typed letter, like in vim
+  if (isVimNormalMode()) letterIndex = Math.max(0, letterIndex - 1);
+
   caret.goTo({
     wordIndex: getActiveWordIndex(),
-    letterIndex: getCurrentInput().length + CompositionState.getData().length,
+    letterIndex,
     isLanguageRightToLeft: isLanguageRightToLeft(),
     isDirectionReversed: isDirectionReversed(),
     animate: Config.smoothCaret !== "off" && !noAnim,
@@ -46,10 +56,19 @@ export function updatePosition(noAnim = false): void {
 
 export const caret = new Caret(qsr("#caret"), Config.caretStyle);
 
+// vim normal mode uses a block caret, unless the caret is turned off
+export function updateStyle(): void {
+  caret.setStyle(
+    isVimNormalMode() && Config.caretStyle !== "off"
+      ? "block"
+      : Config.caretStyle,
+  );
+  updatePosition(true);
+}
+
 configEvent.subscribe(({ key }) => {
   if (key === "caretStyle") {
-    caret.setStyle(Config.caretStyle);
-    updatePosition(true);
+    updateStyle();
   }
   if (key === "smoothCaret") {
     caret.updateBlinkingAnimation();

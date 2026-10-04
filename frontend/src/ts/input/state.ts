@@ -51,3 +51,14 @@ export function getLastInsertCompositionTextData(): string {
 export function setLastInsertCompositionTextData(value: string): void {
   lastInsertCompositionTextData = value;
 }
+
+export type VimMode = "insert" | "normal";
+let vimMode: VimMode = "insert";
+
+export function getVimMode(): VimMode {
+  return vimMode;
+}
+
+export function setVimMode(value: VimMode): void {
+  vimMode = value;
+}

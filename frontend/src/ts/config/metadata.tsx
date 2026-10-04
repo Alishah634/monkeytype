@@ -615,6 +615,15 @@ export const configMetadata: ConfigMetadataObject = {
     description:
       "Automatically go back to the previous line when deleting line leading tab characters. Only works in code languages.",
   },
+  vimMode: {
+    key: "vimMode",
+    fa: { icon: "fa-terminal" },
+    displayString: "vim mode",
+    changeRequiresRestart: true,
+    group: "input",
+    description:
+      "Adds vim style normal and insert modes to the test. Press escape during a test to enter normal mode, where you can use x, s, dd, cc, S, db, cb, diw and ciw (with counts like 3x or 2db) to delete. Press i, a or A to go back to typing. Pressing escape in normal mode works as usual.",
+  },
 
   // sound
   soundVolume: {
