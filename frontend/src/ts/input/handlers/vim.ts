@@ -1,7 +1,12 @@
 import { Config } from "../../config/store";
 import { configEvent } from "../../events/config";
 import * as Caret from "../../test/caret";
-import { isTestActive, wordsHaveTab } from "../../states/test";
+import {
+  getActiveWordIndex,
+  isTestActive,
+  wordsHaveTab,
+} from "../../states/test";
+import * as TestWords from "../../test/test-words";
 import { getInputElementValue } from "../input-element";
 import { getVimMode, setVimMode } from "../state";
 import { emulateDelete } from "./delete";
@@ -48,10 +53,29 @@ function deleteWords(count: number, now: number): void {
   }
 }
 
-// dd / cc / S - clears the current word but never leaves it
 function clearCurrentWord(now: number): void {
   if (isCurrentInputEmpty()) return;
   emulateDelete("deleteWordBackward", now);
+}
+
+// a line starts at the first word or after a word committed with a newline
+function getLineStartIndex(wordIndex: number): number {
+  let index = wordIndex;
+  while (index > 0 && TestWords.words.get(index - 1)?.commit !== "\n") {
+    index--;
+  }
+  return index;
+}
+
+// dd / cc / S / d0 - clears the line up to the caret. words that cant be
+// deleted with backspace (e.g. correct words) stop it early
+function clearCurrentLine(now: number): void {
+  const lineStartIndex = getLineStartIndex(getActiveWordIndex());
+  clearCurrentWord(now);
+  while (getActiveWordIndex() > lineStartIndex) {
+    // the input is empty, so this moves into the previous word and clears it
+    if (!emulateDelete("deleteWordBackward", now)) return;
+  }
 }
 
 function runNormalModeKey(key: string, now: number): void {
@@ -75,10 +99,10 @@ function runNormalModeKey(key: string, now: number): void {
   } else if (command === "s") {
     deleteChars(count, now);
     setMode("insert");
-  } else if (command === "dd") {
-    clearCurrentWord(now);
-  } else if (command === "cc" || command === "S") {
-    clearCurrentWord(now);
+  } else if (command === "dd" || command === "d0") {
+    clearCurrentLine(now);
+  } else if (command === "cc" || command === "S" || command === "c0") {
+    clearCurrentLine(now);
     setMode("insert");
   } else if (command.startsWith("d") && WORD_TARGETS.has(command.slice(1))) {
     deleteWords(count, now);
